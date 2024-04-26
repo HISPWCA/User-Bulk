@@ -1,12 +1,12 @@
 import { useDataQuery } from "@dhis2/app-runtime";
 import PageHeader from "../components/PageHeader";
-import UsersFilters from "../components/UsersFilters";
 import UsersTable from "../components/UsersTable";
+import UsersFilters from "../components/UsersFilters";
 
 const query = {
   users: {
     resource: "users",
-    params: {
+    params: ({ page, pageSize, query }) => ({
       fields: [
         "id",
         "displayName",
@@ -20,18 +20,26 @@ const query = {
       userOrgUnits: true,
       includeChildren: true,
       selfRegistered: false,
-    },
+      page: page || 1,
+      pageSize: pageSize || 10,
+      query: query || "",
+    }),
   },
 };
+
 const User = () => {
-  const { data: userDatas, loading , refetch } = useDataQuery(query);
+  const { data: userDatas, loading, refetch } = useDataQuery(query);
   return (
     <>
       {console.log(userDatas)}
       <PageHeader>User Management</PageHeader>
       <div className="mt-4">
-        <UsersFilters />
-        <UsersTable loading={loading} refetch={refetch} users={userDatas?.users?.users || []} />
+        <UsersFilters refetch={refetch} />
+        <UsersTable
+          loading={loading}
+          refetch={refetch}
+          users={userDatas?.users}
+        />
       </div>
     </>
   );

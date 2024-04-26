@@ -11,11 +11,11 @@ import {
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";
 
-const SettingTable = ({ instances = [], loading }) => {
+const SettingTable = ({ instances = [], loading , isTesting}) => {
   return (
     <div className=" col-span-2">
       <div className="bg-white p-4 border rounded">
-        {loading && (
+        {!isTesting && loading && (
           <div className="my-2 flex items-center gap-2">
             <CircularLoader small />
             <div>Loading...</div>
@@ -27,7 +27,7 @@ const SettingTable = ({ instances = [], loading }) => {
               <TableCellHead dense>Instance Name</TableCellHead>
               <TableCellHead dense>Base Url</TableCellHead>
               <TableCellHead dense>Created At</TableCellHead>
-              <TableCellHead dense>Action</TableCellHead>
+              {/* <TableCellHead dense>Action</TableCellHead> */}
             </TableRowHead>
           </TableHead>
           <TableBody>
@@ -48,12 +48,12 @@ const SettingTable = ({ instances = [], loading }) => {
                 <TableCell dense className="text-gray-700">
                   {instance.createdAt}
                 </TableCell>
-                <TableCell dense>
+                {/* <TableCell dense>
                   <div className="flex items-center gap-2">
                     <FaRegEdit className="text-lg text-blue-500 cursor-pointer" />
                     <RiDeleteBin5Line className="text-lg text-red-500 cursor-pointer" />
                   </div>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

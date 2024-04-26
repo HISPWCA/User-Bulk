@@ -1,12 +1,14 @@
 import { SingleSelect, SingleSelectOption, Input, Checkbox } from "@dhis2/ui";
 
-
-const UsersFilters = () => {
+const UsersFilters = ({ refetch }) => {
   return (
     <div className="my-2 items-center flex gap-2">
-      <Input placeholder="Search by name " />
+      <Input
+        placeholder="Search by name "
+        onChange={({ value }) => setTimeout( () => refetch({ query: value }), 1000)}
+      />
 
-      <SingleSelect
+      {/* <SingleSelect
         className="select"
         onChange={(value) => console.log("value: ", value)}
         placeholder="Organisation Unit "
@@ -44,7 +46,7 @@ const UsersFilters = () => {
         // onFocus={onFocus}
         // onChange={onChange}
         value="checked"
-      />
+      /> */}
     </div>
   );
 };

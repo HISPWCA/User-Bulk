@@ -36,8 +36,8 @@ const SettingForm = ({ onSubmit, setTesting , loading  , isTesting }) => {
                   <Field
                     name="instanceUrl"
                     component={InputFieldFF}
-                    label="Instance Url"
-                    placeholder="Url"
+                    label="Instance Url ( must end with api ) "
+                    placeholder="https://your-remote-server/api"
                     validate={hasValue}
                   />
                 </div>

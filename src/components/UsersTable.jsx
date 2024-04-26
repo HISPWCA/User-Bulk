@@ -13,7 +13,7 @@ import {
 } from "@dhis2/ui";
 import { useNavigate } from "react-router-dom";
 
-const UsersTable = ({ users, loading }) => {
+const UsersTable = ({ users, loading, refetch }) => {
   const navigate = useNavigate();
   return (
     <div className="bg-white ">
@@ -38,14 +38,14 @@ const UsersTable = ({ users, loading }) => {
           </TableRowHead>
         </TableHead>
         <TableBody>
-          {users.length === 0 && (
+          {users?.users?.length === 0 && (
             <TableRow>
               <TableCell colSpan="4" className="text-center text-gray-500">
                 No user available !
               </TableCell>
             </TableRow>
           )}
-          {users.map((user) => (
+          {users?.users?.map((user) => (
             <TableRow key={user.id}>
               <TableCell>{user.displayName}</TableCell>
               <TableCell>{user.userCredentials?.username}</TableCell>
@@ -64,14 +64,23 @@ const UsersTable = ({ users, loading }) => {
             </TableRow>
           ))}
         </TableBody>
-        <TableFoot className="text-right">
-          {/* <Pagination
-            // onPageChange={(value) => {
-            //   console.log("value :", value);
-            // }}
-            // pageSize={users.length}
-          /> */}
-        </TableFoot>
+        {users?.pager && (
+          <TableFoot>
+            <TableRow>
+              <TableCell colSpan="4">
+                <div className="my-2">
+                  <Pagination
+                    {...users?.pager}
+                    onPageChange={(page) => refetch({ ...users.pager, page })}
+                    onPageSizeChange={(pageSize) =>
+                      refetch({ ...users.pager, pageSize })
+                    }
+                  />
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableFoot>
+        )}
       </Table>
     </div>
   );

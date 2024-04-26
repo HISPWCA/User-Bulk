@@ -19,6 +19,7 @@
     "@dhis2/app-runtime": "^3.10.4",
     "@dhis2/ui": "^9.4.4",
     "antd": "^5.16.4",
+    "axios": "^1.6.8",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
     "react-icons": "^5.1.0",
