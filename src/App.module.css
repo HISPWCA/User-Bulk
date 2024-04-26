@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.left {
+  min-width: 200px;
+  max-width: 200px;
+  min-height: 100vh;
+  padding-top: 20px;
+}
+
+.right {
+  flex-grow: 1;
+  min-height: 100vh;
+  padding: 16px 16px 0;
+  background: #f7f7f7;
+  border-left: 1px solid #cccccc80;
+}
+
+.appLoadingContainer {
+  font-weight: bold;
+  padding: 10px 50px;
+}
