@@ -3,7 +3,7 @@ import OrganisationUnitForm from "./OrganisationUnitForm";
 import { useDataQuery } from "@dhis2/app-runtime";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-import { BASIC_INFORMATIONS, USER_ROLE_ACCESS } from "../utils/constants";
+import { BASIC_INFORMATIONS, USER_ROLE_ACCESS } from "../../utils/constants";
 
 const dataStoreQuery = {
   instances: {

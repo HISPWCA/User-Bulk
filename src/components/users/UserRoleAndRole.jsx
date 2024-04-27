@@ -1,7 +1,7 @@
 import { Button } from "@dhis2/ui";
 import { useDataQuery } from "@dhis2/app-runtime";
 import { GrLinkPrevious } from "react-icons/gr";
-import { ORGANISATION_UNIT_ACCESS } from "../utils/constants";
+import { ORGANISATION_UNIT_ACCESS } from "../../utils/constants";
 import UserRoleAndRoleForm from "./UserRoleAndRoleForm";
 import { TfiSave } from "react-icons/tfi";
 

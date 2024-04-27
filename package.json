@@ -9,7 +9,7 @@
     "start": "d2-app-scripts start",
     "test": "d2-app-scripts test",
     "deploy": "d2-app-scripts deploy",
-    "dev": "yarn start --proxy https://play.dhis2.org/40.3.0 --proxyPort=8082"
+    "dev": "yarn start --proxy https://play.dhis2.org/2.38.6 --proxyPort=8082"
   },
   "devDependencies": {
     "@dhis2/cli-app-scripts": "^11.1.1"

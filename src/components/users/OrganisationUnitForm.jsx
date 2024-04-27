@@ -1,6 +1,6 @@
 import { NoticeBox } from "@dhis2/ui";
 import { useState } from "react";
-import OrganisationUnitsTree from "./OrganisationUnitsTree";
+import OrganisationUnitsTree from "../OrganisationUnitsTree";
 
 const OrganisationUnitForm = ({
   title,

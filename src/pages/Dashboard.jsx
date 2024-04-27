@@ -1,13 +1,25 @@
+import { useDataQuery } from "@dhis2/app-runtime";
 import { Button, CalendarInput, Input } from "@dhis2/ui";
 
+const queryDataStore = {
+  instances: {
+    resource: `dataStore/${process.env.REACT_APP_DATASTORE_NAME}/${process.env.REACT_APP_DATASTORE_INSTANCES_KEY}`,
+  },
+}
+
 const Dashboard = () => {
-  const onDateSelect = (date) => console.log("date: ", date);
+
+
+  const { data: dataStoreInstances } = useDataQuery(queryDataStore);
+  
+    const onDateSelect = (date) => console.log("date: ", date);
+
   return (
     <div>
       <div className="text-2xl font-bold mb-6">Overview</div>
       <div className="flex  justify-between">
         <div className="w-[40%] flex gap-2 items-center">
-          <Input type="date" />
+          <Input onChange={onDateSelect} type="date" />
           <div className="p-2 bg-gray-200">
             Currently viewing: Jul 13, 2022 - Jul 20, 2022
           </div>

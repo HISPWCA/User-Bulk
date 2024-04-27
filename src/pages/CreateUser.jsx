@@ -1,13 +1,13 @@
-import UsersOrganisationUnitForm from "../components/UsersOrganisationUnitForm";
+import UsersOrganisationUnitForm from "../components/users/UsersOrganisationUnitForm";
 import PageHeader from "../components/PageHeader";
-import UsersBasicInformationForm from "../components/UsersBasicInformationForm";
+import UsersBasicInformationForm from "../components/users/UsersBasicInformationForm";
 import { useState } from "react";
 import {
   BASIC_INFORMATIONS,
   ORGANISATION_UNIT_ACCESS,
   USER_ROLE_ACCESS,
 } from "../utils/constants";
-import UserRoleAndRole from "../components/UserRoleAndRole";
+import UserRoleAndRole from "../components/users/UserRoleAndRole";
 import { useDataEngine, useDataQuery } from "@dhis2/app-runtime";
 import { CircularLoader } from "@dhis2/ui";
 import { v4 as uuid } from "uuid";
@@ -464,7 +464,7 @@ const CreateUser = () => {
             const instance = dataStoreInstances?.instances?.find(
               (dataInst) => dataInst.id === el.id
             );
-            const response = await axios.post(
+            await axios.post(
               `${instance?.baseUrl}users.json`,
               currentInstancePayload,
               basicAuthentication(
