@@ -18,7 +18,7 @@ const UsersTable = ({ users, loading, refetch }) => {
   return (
     <div className="bg-white ">
       {loading && (
-        <div className="flex gap-4 bg-sky-50 items-center  p-4 border-sky-500 border my-2">
+        <div className="flex gap-4 bg-white items-center  p-4 border my-2">
           <CircularLoader small />
           <div className="font-bold">Loading informations...</div>
         </div>

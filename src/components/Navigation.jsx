@@ -29,19 +29,19 @@ const Navigation = () => (
     <NavigationItem
       label="Dashboard"
       path="/"
-      icon={<LuLayoutDashboard style={{ fontSize: "16px" }} />}
+      icon={<LuLayoutDashboard className="text-green-500 font-bold text-lg" />}
     />
 
     <NavigationItem
       label="User"
       path="/users"
-      icon={<FaUsers style={{ fontSize: "16px" }} />}
+      icon={<FaUsers className="text-red-500 font-bold text-lg" />}
     />
 
     <NavigationItem
       label="Settings"
       path="/settings"
-      icon={<IoSettingsOutline style={{ fontSize: "16px" }} />}
+      icon={<IoSettingsOutline className="text-blue-500 font-bold text-lg" />}
     />
   </Menu>
 );

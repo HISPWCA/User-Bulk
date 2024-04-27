@@ -1,7 +1,7 @@
 import { useDataQuery } from "@dhis2/app-runtime";
 import PageHeader from "../components/PageHeader";
-import UsersTable from "../components/UsersTable";
-import UsersFilters from "../components/UsersFilters";
+import UsersTable from "../components/users/UsersTable";
+import UsersFilters from "../components/users/UsersFilters";
 
 const query = {
   users: {
@@ -31,7 +31,6 @@ const User = () => {
   const { data: userDatas, loading, refetch } = useDataQuery(query);
   return (
     <>
-      {console.log(userDatas)}
       <PageHeader>User Management</PageHeader>
       <div className="mt-4">
         <UsersFilters refetch={refetch} />

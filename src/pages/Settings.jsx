@@ -1,5 +1,5 @@
-import SettingForm from "../components/SettingForm";
-import SettingTable from "../components/SettingTable";
+import SettingForm from "../components/settings/SettingForm";
+import SettingTable from "../components/settings/SettingTable";
 import useFetchAlert from "../hooks/useFetchAlert";
 import { useState } from "react";
 
@@ -249,8 +249,8 @@ const Settings = () => {
       console.log("Error : ", err);
       showError(
         err?.response?.data?.message ||
-          err?.message ||
-          "Error : could not proceed !"
+        err?.message ||
+        "Error : could not proceed !"
       );
       setLoadingSaveRoute(false);
     }

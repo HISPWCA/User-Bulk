@@ -503,7 +503,7 @@ const CreateUser = () => {
     <div>
       <PageHeader>New User</PageHeader>
       {loadingCustomInformation && (
-        <div className="flex gap-4 bg-sky-50 items-center  p-4 border-sky-500 border my-2">
+        <div className="flex gap-4 bg-white items-center  p-4 border my-2">
           <CircularLoader small />
           <div className="font-bold">
             Loading resources, that can take a few minutes...

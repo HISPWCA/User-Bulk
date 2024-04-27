@@ -1,86 +1,177 @@
-import { useDataQuery } from "@dhis2/app-runtime";
-import { Button, CalendarInput, Input } from "@dhis2/ui";
+import { useState, useEffect } from "react";
+import { useDataEngine, useDataQuery } from "@dhis2/app-runtime";
+import Filters from "../components/dashboard/Filters";
+import SingleBoxView from "../components/dashboard/SingleBoxView";
+import dayjs from "dayjs";
+import axios from "axios";
+import { basicAuthentication, decodePassword } from "../utils/function";
 
 const queryDataStore = {
   instances: {
     resource: `dataStore/${process.env.REACT_APP_DATASTORE_NAME}/${process.env.REACT_APP_DATASTORE_INSTANCES_KEY}`,
   },
-}
+};
 
 const Dashboard = () => {
-
-
+  const engine = useDataEngine();
   const { data: dataStoreInstances } = useDataQuery(queryDataStore);
-  
-    const onDateSelect = (date) => console.log("date: ", date);
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
+  const [remoteInstanceData, setRemoteInstanceData] = useState([]);
+  const [loadingRemoteInstanceData, setLoadingRemoteInstanceData] =
+    useState(false);
+  const [currentInstanceData, setCurrentInstanceData] = useState({
+    loading: false,
+    title: "Current instance",
+    totalUsers: 0,
+    activeUsers: 0,
+    notLogged3MonthsAgo: 0,
+    inactiveUsers: 0,
+  });
+
+  const onDateSelected = ({ value }) => setSelectedDate(value);
+
+  const formatResponse = (instances) => {
+    return [];
+  };
+
+  const loadRemoteInstancesData = async () => {
+    try {
+      setLoadingRemoteInstanceData(true);
+      const newRemoteData = [];
+
+      for (let instance of dataStoreInstances?.instances) {
+        const response = await axios.get(
+          `${instance.baseUrl}/users.json?paging=false&fields=id,lastLogin,disabled`,
+          basicAuthentication(
+            instance.username,
+            decodePassword(instance.password)
+          )
+        );
+
+        const users = response?.data?.users || [];
+
+        const months3Ago = dayjs(selectedDate)
+          .subtract(3, "month")
+          .format("YYYY-MM-DD");
+
+        const totalUsers = users?.length || 0;
+        const activeUsers = users?.filter((u) => !u.disabled)?.length || 0;
+        const inactiveUsers = Math.round(
+          ((totalUsers - activeUsers) * 100) / totalUsers
+        );
+
+        const notLogged3MonthsAgoNumber =
+          users?.filter((u) =>
+            u.lastLogin ? dayjs(u.lastLogin).isBefore(months3Ago) : false
+          )?.length || 0;
+
+        const notLogged3MonthsAgo = Math.round(
+          (notLogged3MonthsAgoNumber * 100) / totalUsers
+        );
+        console.log("notLogged3MonthsAgo: ", notLogged3MonthsAgoNumber);
+
+        newRemoteData.push({
+          id: instance.id,
+          title: instance.name,
+          totalUsers,
+          activeUsers,
+          months3Ago,
+          inactiveUsers,
+          notLogged3MonthsAgo,
+        });
+      }
+
+      setRemoteInstanceData(newRemoteData);
+      setLoadingRemoteInstanceData(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingRemoteInstanceData(false);
+    }
+  };
+
+  const loadCurrentInstancesData = async () => {
+    try {
+      setCurrentInstanceData({
+        ...currentInstanceData,
+        loading: true,
+      });
+
+      const response = await engine.query({
+        users: {
+          resource: "users",
+          params: {
+            paging: false,
+            fields: ["id", "lastLogin", "disabled"],
+          },
+        },
+      });
+
+      const months3Ago = dayjs(selectedDate)
+        .subtract(3, "month")
+        .format("YYYY-MM-DD");
+
+      const totalUsers = response?.users?.users?.length || 0;
+      const activeUsers =
+        response?.users?.users?.filter((u) => !u.disabled)?.length || 0;
+
+      const inactiveUsers = Math.round(
+        ((totalUsers - activeUsers) * 100) / totalUsers
+      );
+
+      const notLogged3MonthsAgoNumber =
+        response?.users?.users?.filter((u) =>
+          u.lastLogin ? dayjs(u.lastLogin).isBefore(months3Ago) : false
+        )?.length || 0;
+
+      const notLogged3MonthsAgo = Math.round(
+        (notLogged3MonthsAgoNumber * 100) / totalUsers
+      );
+
+      setCurrentInstanceData({
+        ...currentInstanceData,
+        totalUsers,
+        activeUsers,
+        months3Ago,
+        inactiveUsers,
+        notLogged3MonthsAgo,
+        loading: false,
+      });
+    } catch (error) {
+      console.log(error);
+
+      setCurrentInstanceData({
+        ...currentInstanceData,
+        loading: false,
+      });
+    }
+  };
+
+  const loadData = () => {
+    loadCurrentInstancesData();
+    dataStoreInstances?.instances?.length > 0 && loadRemoteInstancesData();
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [dataStoreInstances, selectedDate]);
 
   return (
     <div>
       <div className="text-2xl font-bold mb-6">Overview</div>
-      <div className="flex  justify-between">
-        <div className="w-[40%] flex gap-2 items-center">
-          <Input onChange={onDateSelect} type="date" />
-          <div className="p-2 bg-gray-200">
-            Currently viewing: Jul 13, 2022 - Jul 20, 2022
-          </div>
-        </div>
-        <Button primary> List users</Button>
-      </div>
-
+      <Filters onDateSelected={onDateSelected} selectedDate={selectedDate} />
       <div className="text-2xl text-gray-800 font-bold my-10">Statistics</div>
-
-      <div className="grid grid-cols-6 gap-4">
-        <div className="col-span-2">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border-l-blue-500 border-l-[8px] p-6 border rounded-lg bg-blue-50">
-              <div className="text-gray-500">Total Users</div>
-              <div className="mt-4 text-4xl font-extrabold">123</div>
-            </div>
-            <div className="border-l-green-500 border-l-[8px] p-6 border rounded-lg bg-green-50">
-              <div className="text-gray-500">Active Users</div>
-              <div className="mt-4 text-4xl font-extrabold">41</div>
-            </div>
-            <div className="border-l-orange-500 border-l-[8px] p-6 border rounded-lg bg-orange-50">
-              <div className="text-gray-500">Not Logged 3 months ago</div>
-              <div className="mt-4 text-4xl font-extrabold">0.0%</div>
-            </div>
-            <div className="border-l-blue-500 border-l-[8px] p-6 border rounded-lg bg-blue-50">
-              <div className="text-gray-500">Inative Users</div>
-              <div className="mt-4 text-4xl font-extrabold">0.0%</div>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-3 bg-orange-50 p-6 border rounded-lg">
-          <div className="text-gray-700">SATISFACTION RATINGS</div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="mt-6 col-span-1">
-              <div className="mt-2">Excellent</div>
-              <div className="mt-2">Great</div>
-              <div className="mt-2">Good</div>
-              <div className="mt-2">Okay</div>
-              <div className="mt-2">Bad</div>
-            </div>
-            <div>chart </div>
-          </div>
-        </div>
-        <div className="col-span-1 border rounded-lg bg-white">
-          <div className="p-6 border-b flex justify-between">
-            <div className="text-gray-700 font-bold">Solved tickets</div>
-            <div className="text-gray-500">92</div>
-          </div>
-          <div className="p-6 border-b flex justify-between">
-            <div className="text-gray-700 font-bold">Unsolved tickets</div>
-            <div className="text-gray-500">50</div>
-          </div>
-          <div className="p-6 border-b flex justify-between">
-            <div className="text-gray-700 font-bold">Solved tickets</div>
-            <div className="text-gray-500">8</div>
-          </div>
-          <div className="p-6 flex justify-between">
-            <div className="text-gray-700 font-bold">Others</div>
-            <div className="text-gray-500">89</div>
-          </div>
-        </div>
+      <div className="grid grid-cols-3 gap-10">
+        <SingleBoxView {...currentInstanceData} />
+        {dataStoreInstances?.instances?.map((item) => (
+          <SingleBoxView
+            {...remoteInstanceData.find((r) => r.id === item.id)}
+            title={item.name}
+            loading={loadingRemoteInstanceData}
+            key={item.title}
+          />
+        ))}
       </div>
     </div>
   );
