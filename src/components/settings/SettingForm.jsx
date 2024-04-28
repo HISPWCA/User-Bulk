@@ -9,7 +9,14 @@ import { IoSaveOutline } from "react-icons/io5";
 
 const { Field, Form } = ReactFinalForm;
 
-const SettingForm = ({ onSubmit, setTesting , loading  , isTesting }) => {
+const SettingForm = ({
+  onSubmit,
+  setTesting,
+  loading,
+  isTesting,
+  currentInstance,
+  setCurrentInstance,
+}) => {
   const handleTestInstance = (_) => {
     setTesting(true);
   };
@@ -18,8 +25,20 @@ const SettingForm = ({ onSubmit, setTesting , loading  , isTesting }) => {
     <div className=" col-span-1">
       <div className="bg-white p-4 border rounded">
         <div className="font-bold">New Instance</div>
+        {console.log("current : ", currentInstance)}
         <Divider />
-        <Form onSubmit={onSubmit}>
+        <Form
+          onSubmit={onSubmit}
+          initialValues={
+            currentInstance
+              ? {
+                  instanceName: currentInstance.name,
+                  instanceUrl: currentInstance.baseUrl,
+                  username: currentInstance.username,
+                }
+              : null
+          }
+        >
           {({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -60,17 +79,27 @@ const SettingForm = ({ onSubmit, setTesting , loading  , isTesting }) => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button onClick={handleTestInstance} type="submit" loading={isTesting  ? loading : false }>
+                {currentInstance && (
+                  <Button destructive onClick={() => setCurrentInstance(null)}>
+                    Cancel
+                  </Button>
+                )}
+                <Button
+                  onClick={handleTestInstance}
+                  type="submit"
+                  loading={isTesting ? loading : false}
+                >
                   Test instance
                 </Button>
+
                 <Button
                   type="submit"
                   icon={<IoSaveOutline className="text-sm" />}
                   primary
                   onClick={() => setTesting(false)}
-                  loading={isTesting  ? false : loading }
+                  loading={isTesting ? false : loading}
                 >
-                  Save
+                  {currentInstance ? "Update" : "Save"}
                 </Button>
               </div>
             </form>

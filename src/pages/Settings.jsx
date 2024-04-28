@@ -33,13 +33,13 @@ const dataStoreMutation = {
 const Settings = () => {
   const { showSuccess, showError } = useFetchAlert();
   const [isTesting, setTesting] = useState(false);
-  const engine = useDataEngine();
   const [loadingSaveRoute, setLoadingSaveRoute] = useState(false);
   const {
     data,
     loading: loadingDatastore,
     refetch,
   } = useDataQuery(dataStoreQuery);
+  const [currentInstance, setCurrentInstance] = useState(null);
 
   const [dataStoreMutate] = useDataMutation(dataStoreMutation, {
     onError: (error) => showError("Error :", error.message),
@@ -208,7 +208,7 @@ const Settings = () => {
     try {
       setLoadingSaveRoute(true);
 
-      if (data?.instances?.find((i) => i.name === values.instanceName))
+      if (data?.instances?.find((i) => i.name === values.instanceName) && !currentInstance)
         throw new Error("Instance already exists !");
 
       const responseMe = await axios.get(
@@ -226,8 +226,26 @@ const Settings = () => {
         }
       } else {
         const payloadList = data?.instances ? data.instances : [];
-        await dataStoreMutate({
-          payload: [
+
+        let payload = [];
+
+        if (currentInstance) {
+          payload = payloadList.map((i) => {
+            if (i.id === currentInstance.id) {
+              return {
+                ...i,
+                name: values.instanceName,
+                baseUrl: resolveUrl(values.instanceUrl),
+                username: values.username,
+                password: encodePassword(values.password),
+                createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+              };
+            }
+
+            return i;
+          });
+        } else {
+          payload = [
             ...payloadList,
             {
               id: uuid(),
@@ -237,7 +255,11 @@ const Settings = () => {
               password: encodePassword(values.password),
               createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
             },
-          ],
+          ];
+        }
+
+        await dataStoreMutate({
+          payload,
         });
 
         refetch();
@@ -249,10 +271,23 @@ const Settings = () => {
       console.log("Error : ", err);
       showError(
         err?.response?.data?.message ||
-        err?.message ||
-        "Error : could not proceed !"
+          err?.message ||
+          "Error : could not proceed !"
       );
       setLoadingSaveRoute(false);
+    }
+  };
+
+  const onDelete = async (id) => {
+    try {
+      await dataStoreMutate({
+        payload: data?.instances?.filter((i) => i.id !== id),
+      });
+      refetch();
+      showSuccess("Delete successfully !");
+    } catch (err) {
+      console.log("Error : ", err);
+      showError(err?.message || "Error : could not proceed !");
     }
   };
 
@@ -266,11 +301,15 @@ const Settings = () => {
           setTesting={setTesting}
           isTesting={isTesting}
           onSubmit={onSubmit}
+          setCurrentInstance={setCurrentInstance}
+          currentInstance={currentInstance}
         />
+
         <SettingTable
-          isTesting={isTesting}
-          loading={loadingSaveRoute}
+          loading={loadingDatastore}
           instances={data?.instances || []}
+          setCurrentInstance={setCurrentInstance}
+          onDelete={onDelete}
         />
       </div>
     </>

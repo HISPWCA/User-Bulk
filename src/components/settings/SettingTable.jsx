@@ -1,4 +1,5 @@
 import {
+  Button,
   CircularLoader,
   Table,
   TableBody,
@@ -10,12 +11,18 @@ import {
 } from "@dhis2/ui";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";
+import { Popover } from "antd";
 
-const SettingTable = ({ instances = [], loading , isTesting}) => {
+const SettingTable = ({
+  instances = [],
+  loading,
+  setCurrentInstance,
+  onDelete,
+}) => {
   return (
     <div className=" col-span-2">
       <div className="bg-white p-4 border rounded">
-        {!isTesting && loading && (
+        {loading && (
           <div className="my-2 flex items-center gap-2">
             <CircularLoader small />
             <div>Loading...</div>
@@ -27,7 +34,7 @@ const SettingTable = ({ instances = [], loading , isTesting}) => {
               <TableCellHead dense>Instance Name</TableCellHead>
               <TableCellHead dense>Base Url</TableCellHead>
               <TableCellHead dense>Created At</TableCellHead>
-              {/* <TableCellHead dense>Action</TableCellHead> */}
+              <TableCellHead dense>Action</TableCellHead>
             </TableRowHead>
           </TableHead>
           <TableBody>
@@ -48,12 +55,45 @@ const SettingTable = ({ instances = [], loading , isTesting}) => {
                 <TableCell dense className="text-gray-700">
                   {instance.createdAt}
                 </TableCell>
-                {/* <TableCell dense>
+                <TableCell dense>
                   <div className="flex items-center gap-2">
-                    <FaRegEdit className="text-lg text-blue-500 cursor-pointer" />
-                    <RiDeleteBin5Line className="text-lg text-red-500 cursor-pointer" />
+                    <FaRegEdit
+                      onClick={() => setCurrentInstance(instance)}
+                      className="text-lg text-blue-500 cursor-pointer"
+                    />
+                    <Popover
+                      content={
+                        <div>
+                          <div className=" bg-gray-200 p-2 my-2 border">
+                            Are you sure to delete :
+                            <span className="font-bold ml-2 text-red-500">
+                              {instance.name} ?
+                            </span>
+                          </div>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              small
+                              destructive
+                              onClick={() => {
+                                onDelete(instance.id);
+                              }}
+                            >
+                              Yes
+                            </Button>
+                          </div>
+                        </div>
+                      }
+                      title={
+                        <span className="text-red-500 font-bold text-lg">
+                          Delete instance
+                        </span>
+                      }
+                      trigger="hover"
+                    >
+                      <RiDeleteBin5Line className="text-lg text-red-500 cursor-pointer" />
+                    </Popover>
                   </div>
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
